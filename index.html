@@ -15,9 +15,11 @@
     --dc-a:#202d4f; --dc-b:#3d4d7a; --dc-accent:#b22234;
   }
   * { box-sizing: border-box; margin:0; padding:0; }
+  html, body { overflow-x:hidden; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background:#eef1f5; color:#1f2733; line-height:1.5; padding:0 0 60px;
+    -webkit-text-size-adjust:100%;
   }
   header.hero {
     background: linear-gradient(135deg, var(--tx-a), var(--tx-b));
@@ -71,8 +73,9 @@
   body.state-GA .pdf-link { background: var(--ga-a); }
   body.state-FL .pdf-link { background: var(--fl-a); }
   body.state-DC .pdf-link { background: var(--dc-a); }
+  .table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
   table { width:100%; border-collapse:collapse; background:#fff;
-          border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+          border-radius:14px; overflow:hidden; }
   thead th {
     text-align:left; font-size:.8rem; text-transform:uppercase; letter-spacing:.6px;
     color:#fff; padding:14px 16px; cursor:pointer; user-select:none; white-space:nowrap;
@@ -127,15 +130,71 @@
   }
   .fit-note strong { color:#1f2733; }
   footer { text-align:center; color:#9aa2ad; font-size:.8rem; margin-top:26px; }
+  /* Tablets and small laptops */
   @media (max-width:820px){
+    .wrap { padding: 0 12px; }
+    .controls { padding:14px; gap:12px; flex-direction:column; align-items:stretch; }
+    .toggle {
+      display:flex; width:100%; max-width:100%; overflow-x:auto; overflow-y:hidden;
+      -webkit-overflow-scrolling:touch; flex-wrap:nowrap; scrollbar-width:none;
+    }
+    .toggle::-webkit-scrollbar { display:none; }
+    .toggle button { flex:0 0 auto; white-space:nowrap; }
+    .search { width:100%; min-width:0; }
     thead th.roles, tbody td.roles { display:none; }
   }
+  /* Phones: stacked card layout */
   @media (max-width:600px){
-    thead th.careers, tbody td.careers { width:auto; white-space:normal; }
-  }
-  @media (max-width:600px){
-    thead th.year, tbody td.year { display:none; }
+    body { padding:0 0 40px; }
+    header.hero { padding:26px 16px 22px; }
     header.hero h1 { font-size:1.5rem; }
+    header.hero p { font-size:.9rem; }
+    .wrap { margin-top:-18px; }
+    .controls { border-radius:12px; padding:12px; }
+    .toggle button { padding:10px 16px; font-size:.9rem; }
+    .fit-note { padding:12px 14px; font-size:.82rem; }
+    .meta-row { flex-direction:column; align-items:stretch; }
+    .pdf-link { justify-content:center; margin:6px 0 0; }
+
+    /* Turn each row into a card */
+    .table-scroll { overflow-x:visible; box-shadow:none; background:transparent; }
+    table { box-shadow:none; background:transparent; border-radius:0; }
+    thead { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); border:0; }
+    tbody tr {
+      display:block; background:#fff; border-radius:12px; margin-bottom:12px;
+      box-shadow:0 4px 14px rgba(0,0,0,.08); padding:4px 4px 8px; position:relative;
+    }
+    tbody tr:nth-child(even) { background:#fff; }
+    tbody tr:hover { background:#fff; }
+    tbody td {
+      display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+      width:auto !important; text-align:right; padding:9px 16px;
+      border-bottom:1px solid #f0f3f7; white-space:normal;
+      overflow-wrap:anywhere; word-break:break-word;
+    }
+    tbody td:last-child { border-bottom:0; }
+    tbody td::before {
+      content: attr(data-label); font-weight:700; font-size:.72rem; text-transform:uppercase;
+      letter-spacing:.5px; color:#8891a0; text-align:left; flex:0 0 auto; padding-top:2px;
+    }
+    /* Bring back fields hidden in table mode, now as card rows */
+    tbody td.roles { display:flex; min-width:0; }
+    tbody td.year { display:flex; }
+    tbody td.name { font-size:1rem; }
+    tbody td.pay { width:auto; }
+    tbody td.careers {
+      display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:6px;
+      width:auto;
+    }
+    tbody td.careers::before { align-self:center; }
+    tbody td.rank::before { color:inherit; opacity:.6; }
+  }
+  /* Small phones */
+  @media (max-width:380px){
+    header.hero h1 { font-size:1.3rem; }
+    .toggle button { padding:9px 13px; font-size:.85rem; }
+    tbody td { font-size:.85rem; }
+    tbody td.name { font-size:.95rem; }
   }
 </style>
 </head>
@@ -170,6 +229,7 @@
       <div class="meta" id="meta"></div>
       <a id="pdfLink" class="pdf-link" href="#" download>&#11015; Download PDF</a>
     </div>
+    <div class="table-scroll">
     <table>
       <thead>
         <tr>
@@ -185,6 +245,7 @@
       </thead>
       <tbody id="tbody"></tbody>
     </table>
+    </div>
     <footer>Data compiled from Best Employers by State rankings.</footer>
   </div>
 
@@ -242,14 +303,14 @@
     const tb = document.getElementById('tbody');
     tb.innerHTML = rows.map(r =>
       '<tr>' +
-      '<td class="rank">' + r.rank + '</td>' +
-      '<td class="name"><a class="name-link" href="' + esc(r.careers) + '" target="_blank" rel="noopener" title="Careers page via Google">' + esc(r.name) + '</a></td>' +
-      '<td class="fit"><span class="fit-badge ' + r.fit.toLowerCase() + '">' + esc(r.fit) + '</span></td>' +
-      '<td class="roles">' + esc(r.roles) + '</td>' +
-      '<td class="pay">' + esc(r.pay) + '</td>' +
-      '<td class="year">' + esc(r.founded) + '</td>' +
-      '<td class="hq">' + esc(r.hq) + '</td>' +
-      '<td class="careers">' +
+      '<td class="rank" data-label="Rank">' + r.rank + '</td>' +
+      '<td class="name" data-label="Company"><a class="name-link" href="' + esc(r.careers) + '" target="_blank" rel="noopener" title="Careers page via Google">' + esc(r.name) + '</a></td>' +
+      '<td class="fit" data-label="Fit"><span class="fit-badge ' + r.fit.toLowerCase() + '">' + esc(r.fit) + '</span></td>' +
+      '<td class="roles" data-label="Target Roles">' + esc(r.roles) + '</td>' +
+      '<td class="pay" data-label="Est. Pay">' + esc(r.pay) + '</td>' +
+      '<td class="year" data-label="Founded">' + esc(r.founded) + '</td>' +
+      '<td class="hq" data-label="Headquarters">' + esc(r.hq) + '</td>' +
+      '<td class="careers" data-label="Careers">' +
         '<a class="career-link li" href="' + esc(r.linkedin) + '" target="_blank" rel="noopener" title="Open roles on LinkedIn">in Jobs</a>' +
         '<a class="career-link gg" href="' + esc(r.careers) + '" target="_blank" rel="noopener" title="Company careers page via Google">Careers</a>' +
       '</td>' +
