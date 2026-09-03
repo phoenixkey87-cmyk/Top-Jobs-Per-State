@@ -152,27 +152,19 @@
   let sortKey = 'rank';
   let sortAsc = true;
 
-  const LABELS = { TX: 'Texas', MO: 'Missouri', NC: 'North Carolina', TN: 'Tennessee', GA: 'Georgia', FL: 'Florida', DC: 'Washington, D.C.' };
-  const PDFS = {
-    TX: 'Best Employers - Texas.pdf',
-    MO: 'Best Employers - Missouri.pdf',
-    NC: 'Best Employers - North Carolina.pdf',
-    TN: 'Best Employers - Tennessee.pdf',
-    GA: 'Best Employers - Georgia.pdf',
-    FL: 'Best Employers - Florida.pdf',
-    DC: 'Best Employers - Washington DC.pdf'
-  };
+  const LABELS = {"MO": "Missouri", "TX": "Texas", "NC": "North Carolina", "TN": "Tennessee", "GA": "Georgia", "FL": "Florida", "DC": "Washington, D.C."};
+  const PDFS = {"MO": "Best Employers - Missouri.pdf", "TX": "Best Employers - Texas.pdf", "NC": "Best Employers - North Carolina.pdf", "TN": "Best Employers - Tennessee.pdf", "GA": "Best Employers - Georgia.pdf", "FL": "Best Employers - Florida.pdf", "DC": "Best Employers - Washington DC.pdf"};
 
   function setState(s){
     state = s;
     document.body.className = 'state-' + s;
-    ['TX','MO','NC','TN','GA','FL','DC'].forEach(k =>
+    Object.keys(LABELS).forEach(k =>
       document.getElementById('btn-' + k).classList.toggle('active', s === k));
     const count = DATA[s].length;
     document.getElementById('subtitle').innerHTML = LABELS[s] + ' &middot; Top ' + count;
     const pdf = document.getElementById('pdfLink');
     pdf.href = encodeURIComponent(PDFS[s]);
-    pdf.textContent = '\u2B07 Download ' + LABELS[s] + ' PDF';
+    pdf.textContent = '⬇ Download ' + LABELS[s] + ' PDF';
     sortKey = 'rank'; sortAsc = true;
     render();
   }
