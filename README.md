@@ -24,7 +24,7 @@ Each entry lists the employer's rank, name, year founded, headquarters, and a **
 
 ## Job-fit assessment
 
-Fit, target roles, and pay estimates are matched to LaKeysha Strickland's profile: Systems Engineer / Automation & Change Management, with Python automation, Power Platform, AWS, ITIL/change governance, and an MBA plus CSM/CSPO and Six Sigma. Sort by the **Fit** column to surface the strongest matches.
+Fit, target roles, and pay estimates are matched to the candidate's profile: Systems Engineer / Automation & Change Management, with Python automation, Power Platform, AWS, ITIL/change governance, and an MBA plus CSM/CSPO and Six Sigma. Sort by the **Fit** column to surface the strongest matches.
 
 **Note:** Hiring status is not live data, and pay figures are general U.S. market estimates for these roles — not offers or job postings from the employers.
 
